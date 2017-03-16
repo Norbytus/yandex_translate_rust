@@ -63,9 +63,22 @@ impl YandexTranslate {
 
         let mut query: String = String::from(self.url);
 
-        let query_params: Vec<&str> = vec![ "key", &self.api_key, "from", from, "to", to];
+        let mut lang: String = String::new();
+        lang.push_str(from);
+        lang.push_str("-");
+        lang.push_str(to);
+
+        let query_params: Vec<&str> = vec![
+            "key",
+            &self.api_key,
+            "lang",
+            &lang,
+            "text",
+            what ];
 
         query = query + &YandexTranslate::vec_to_string(query_params);
+
+        println!("{}", query);
 
         let request = self.client
             .get(&query)
@@ -73,6 +86,8 @@ impl YandexTranslate {
             .unwrap()
             .read_to_string(&mut result)
             .unwrap();
+
+        println!("{:?}", result);
 
     }
 
