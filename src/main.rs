@@ -25,12 +25,15 @@ fn main() {
     }*/
 
 
-    let mut translate = YandexTranslate::new()
+    let mut result = YandexTranslate::new()
         .set_apikey("trnsl.1.1.20170312T094041Z.4da8d12c2c6c961e.4bd73640b569f7bfb32b545e188ea1d79dd9cd0e")
         .translate_from_to("Hello world", "en", "ru");
 
+    result.get_code();
+
 }
 
+#[derive(Debug)]
 struct YandexTranslate {
     url: &'static str,
     api_key: String,
@@ -57,9 +60,7 @@ impl YandexTranslate {
         self
     }
 
-    fn translate_from_to(&self, what: &str, from: &str, to: &str) {
-
-        let mut result: String = String::new();
+    fn translate_from_to(&self, what: &str, from: &str, to: &str) -> YandexTranslateResult {
 
         let mut query: String = String::from(self.url);
 
@@ -78,16 +79,25 @@ impl YandexTranslate {
 
         query = query + &YandexTranslate::vec_to_string(query_params);
 
-        println!("{}", query);
+        self.execute(&query)
+
+    }
+
+    fn execute(&self, query: &str) -> YandexTranslateResult {
+
+        let mut result: String = String::new();
 
         let request = self.client
-            .get(&query)
+            .get(query)
             .send()
             .unwrap()
             .read_to_string(&mut result)
             .unwrap();
 
-        println!("{:?}", result);
+        match json::parse(&result) {
+            Ok(json) => return YandexTranslateResult::new(json),
+            Err(message) => panic!("{}", message),
+        }
 
     }
 
@@ -117,3 +127,27 @@ impl YandexTranslate {
     }
 
 }
+
+#[derive(Debug)]
+struct YandexTranslateResult {
+    data: Option<JsonValue>,
+}
+
+impl YandexTranslateResult {
+
+        fn new(json: JsonValue) -> YandexTranslateResult {
+            YandexTranslateResult { data: Some(json) }
+        }
+
+        fn get_code(&self) -> Option<f64> {
+            let temp = self.data.clone();
+            for row in temp.unwrap().entries() {
+                match row {
+                    ("code", &JsonValue::Number(code)) => return Some(code.into()),
+                    _  => return None,
+                }
+            }
+        }
+
+}
+
