@@ -3,15 +3,14 @@ pub mod yclient {
     extern crate json;
     extern crate hyper;
     extern crate hyper_native_tls;
-    
+
     use std::io::Read;
-    use std::fmt::Debug;
     use std::convert::Into;
-    
+
     use self::hyper::client::Client;
     use self::hyper::net::HttpsConnector;
     use self::hyper_native_tls::NativeTlsClient;
-    
+
     use self::json::JsonValue;
 
     #[derive(Debug)]
@@ -20,9 +19,9 @@ pub mod yclient {
         api_key: String,
         client: Client,
     }
-    
+
     impl YandexTranslate {
-    
+
         pub fn new() -> YandexTranslate {
     
             let ssl = NativeTlsClient::new().unwrap();
@@ -41,24 +40,14 @@ pub mod yclient {
             self
         }
     
-        pub fn translate_from_to(&self, what: &str, from: &str, to: &str) -> YandexTranslateResult {
+        pub fn translate_from_to(&self, what: Vec<&str>, ft: &str)
+            -> YandexTranslateResult {
     
             let mut query: String = String::from(self.url);
     
-            let mut lang: String = String::new();
-            lang.push_str(from);
-            lang.push_str("-");
-            lang.push_str(to);
+            query = format!("{}key={}&lang={}", query, self.api_key, ft);
     
-            let query_params: Vec<&str> = vec![
-                "key",
-                &self.api_key,
-                "lang",
-                &lang,
-                "text",
-                what ];
-    
-            query = query + &YandexTranslate::vec_to_string(query_params);
+            query = query + &YandexTranslate::vec_to_string(what, "&text=");
     
             self.execute(&query)
     
@@ -67,7 +56,7 @@ pub mod yclient {
         fn execute(&self, query: &str) -> YandexTranslateResult {
     
             let mut result: String = String::new();
-    
+
             let request = self.client
                 .get(query)
                 .send()
@@ -82,54 +71,70 @@ pub mod yclient {
     
         }
     
-        fn vec_to_string(vec: Vec<&str>) -> String {
+        fn vec_to_string(vec: Vec<&str>, delimetr: &str) -> String {
     
             let result: String = vec.iter()
                 .enumerate()
                 .fold(String::new(), |mut r, (i, v)| {
-    
-                    match i % 2 {
-                        0 => {
-                            r.push_str(v);
-                            r.push_str("=");
-                        },
-                        _ => {
-                            r.push_str(v);
-                            r.push_str("&");
-                        },
-                    }
-    
+                    r.push_str(delimetr);
+                    r.push_str(v);
                     r
-    
                 });
     
             result
     
         }
-    
+
     }
-    
-    #[derive(Debug)]
+
+    #[derive(Debug, Clone)]
     pub struct YandexTranslateResult {
         data: Option<JsonValue>,
     }
-    
-    impl YandexTranslateResult {
-    
-            fn new(json: JsonValue) -> YandexTranslateResult {
-                YandexTranslateResult { data: Some(json) }
-            }
-    
-            fn get_code(&self) {
-                let temp = self.data.clone();
-                //for row in temp.unwrap().entries() {
-                //    match row {
-                //        ("code", &JsonValue::Number(code)) => return Some(code.into()),
-                //        _  => return None,
-                //    }
-                //}
-            }
-    
-    }
 
+    impl YandexTranslateResult {
+
+        fn new(json: JsonValue) -> YandexTranslateResult {
+            YandexTranslateResult { data: Some(json) }
+        }
+
+        pub fn get_code(&self) -> Option<u64> {
+
+           let mut data = self.data.clone().unwrap();
+
+           let mut code = None;
+
+           for val in data.entries() {
+               match val {
+                   ("code", &JsonValue::Number(num)) => {
+                        let ( _, temp, _ ) = num.as_parts();
+                        code = Some(temp);
+                   },
+                   _ => {},
+               }
+           }
+
+            code
+
+        }
+
+        pub fn get_text(&self) {
+
+           let mut data = self.data.clone().unwrap();
+
+           //let mut text = None;
+
+           for val in data.entries() {
+               match val {
+                   ("text", &JsonValue::Array(ref vec)) => {
+                       //println!("{:?}", vec));
+                   },
+                   _ => {},
+               }
+           }
+        
+        }
+
+    } 
 }
+
