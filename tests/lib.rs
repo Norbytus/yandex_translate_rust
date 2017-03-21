@@ -18,3 +18,23 @@ fn set_api_key() {
     translate.set_apikey(API_KEY);
 
 }
+
+#[test]
+fn get_code() {
+
+    let translate = YandexTranslate::new();
+    let request = translate.set_apikey(API_KEY)
+        .translate_from_to(vec!["Hello"], "en-ru");
+    request.get_code();
+
+}
+
+#[test]
+fn get_text() {
+
+    let translate = YandexTranslate::new();
+    let request = translate.set_apikey(API_KEY)
+        .translate_from_to(vec!["Hello"], "en-ru");
+    request.get_text();
+
+}
