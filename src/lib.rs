@@ -96,41 +96,47 @@ pub mod yclient {
             YandexTranslateResult { data: Some(json) }
         }
 
-        pub fn get_code(&self) -> Option<u64> {
+        pub fn get_code(&self) -> Result<u64, &'static str> {
 
-           let mut data = self.data.clone().unwrap();
+            let data = self.data.clone().unwrap();
+            
+            if data.has_key("code") {
 
-           let mut code = None;
+                let (_, code, _) = data["code"]
+                    .as_number()
+                    .unwrap()
+                    .as_parts();
 
-           for val in data.entries() {
-               match val {
-                   ("code", &JsonValue::Number(num)) => {
-                        let ( _, temp, _ ) = num.as_parts();
-                        code = Some(temp);
-                   },
-                   _ => {},
-               }
-           }
+                match code {
+                    200 => { Ok(code) },
+                    _ => { Err("Error") },
+                }
 
-            code
+            } else {
+
+                Err("Wrong JSON format")
+
+            }
 
         }
 
         pub fn get_text(&self) {
 
-           let mut data = self.data.clone().unwrap();
+            match self.get_code() {
+                Ok(_) => {
+                    let data = self.data.clone().unwrap();
 
-           //let mut text = None;
+                    let mut result_vec: Vec<&str> = Vec::new();
 
-           for val in data.entries() {
-               match val {
-                   ("text", &JsonValue::Array(ref vec)) => {
-                       //println!("{:?}", vec));
-                   },
-                   _ => {},
-               }
-           }
-        
+                    for text in data["text"].members() {
+                        result_vec.push(text.as_str().unwrap());
+                    };
+                },
+                Err(e) => {
+                    println!("{}", e);
+                }
+            }
+
         }
 
     } 
