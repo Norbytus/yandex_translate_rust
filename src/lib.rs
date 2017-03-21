@@ -74,10 +74,8 @@ pub mod yclient {
         fn vec_to_string(vec: Vec<&str>, delimetr: &str) -> String {
     
             let result: String = vec.iter()
-                .enumerate()
-                .fold(String::new(), |mut r, (i, v)| {
-                    r.push_str(delimetr);
-                    r.push_str(v);
+                .fold(String::new(), |mut r, v| {
+                    r.push_str(&format!("{}{}", delimetr, v));
                     r
                 });
     
@@ -136,5 +134,6 @@ pub mod yclient {
         }
 
     } 
+
 }
 
