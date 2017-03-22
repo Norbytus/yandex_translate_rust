@@ -120,20 +120,36 @@ pub mod yclient {
 
         }
 
-        pub fn get_text(&self) {
+        pub fn get_text(&self) -> Result<Vec<String>, &'static str> {
 
-            match self.get_code() {
+            let code = self.get_code();
+
+            match code {
                 Ok(_) => {
+
                     let data = self.data.clone().unwrap();
 
-                    let mut result_vec: Vec<&str> = Vec::new();
+                    let mut result_vec: Vec<String> = Vec::new();
 
                     for text in data["text"].members() {
-                        result_vec.push(text.as_str().unwrap());
+
+                        let text: String = text
+                            .as_str()
+                            .unwrap()
+                            .parse::<String>()
+                            .unwrap();
+
+                        result_vec.push(text);
+
                     };
+
+                    Ok(result_vec)
+
                 },
                 Err(e) => {
-                    println!("{}", e);
+
+                    Err("Some error")
+
                 }
             }
 
