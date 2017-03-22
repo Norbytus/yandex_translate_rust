@@ -2,7 +2,11 @@ extern crate yandex_translate;
 
 use yandex_translate::yclient::YandexTranslate;
 
+use std::env;
+
 fn main() {
+
+    read_env();
 
     let translate = YandexTranslate::new();
 
@@ -11,5 +15,19 @@ fn main() {
         .translate_from_to(vec!["Hello", "World"], "en-ru");
 
     request.get_text();
+
+}
+
+fn read_env() {
+
+    let mut args_iter = env::args().into_iter();
+
+    let lang = args_iter.find( |arg| arg == "-l" || arg == "--lang" );
+
+    let mut lang_param: Option<String> = None;
+
+    if lang.is_some() {
+        lang_param = args_iter.next();
+    }
 
 }
