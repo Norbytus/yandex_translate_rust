@@ -52,7 +52,7 @@ pub mod yclient {
             self.execute(&query)
     
         }
-    
+
         fn execute(&self, query: &str) -> YandexTranslateResult {
     
             let mut result: String = String::new();
@@ -109,6 +109,12 @@ pub mod yclient {
 
                 match code {
                     200 => { Ok(code) },
+                    401 => { Err("Invalid API key.") },
+                    402 => { Err("Blocked API key.") },
+                    404 => { Err("Exceeded the daily limit on the amount of translated text.") },
+                    413 => { Err("Exceeded the maximum text size.") },
+                    422 => { Err("The text cannot be translated.") },
+                    501 => { Err("The specified translation direction is not supported.") },
                     _ => { Err("Error") },
                 }
 
