@@ -1,52 +1,88 @@
 extern crate yandex_translate;
+extern crate clap;
 
 use yandex_translate::yandex_translate::client::YandexTranslate;
 
+use clap::{Arg, App};
+
 use std::env;
-use std::io::Read;
-use std::fs::{File, OpenOptions};
+use std::fs::{OpenOptions, File};
+use std::io::{self, Read};
 
 fn main() {
 
-    /*let translate = YandexTranslate::new();
+    let home_var = env::vars().find( | var | var.0 == "HOME" );
 
-    let request = translate
-        .set_apikey("trnsl.1.1.20170312T094041Z.4da8d12c2c6c961e.4bd73640b569f7bfb32b545e188ea1d79dd9cd0e")
-        .translate_from_to(vec![&text.unwrap()], &lang.unwrap());
+    let mut require_apikey = false;
 
-    let mut result_text: String = String::new();
+    let mut conf_apikey: String = String::new();
 
-    match request.get_text() {
-        Ok(text) => {
-            result_text = text.iter()
-                .fold(String::new(), |mut s, v| {
-                    s.push_str(v);
-                    s
-                });
+    let mut path: String = match home_var {
+        Some(temp_path) => {
+            temp_path.1
         },
-        Err(e) => panic!("{}", e)
+        None => String::new(),
+    };
+
+    let config = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .open(path.clone() + "/.yandex.conf");
+
+    let file: Option<File> = match config {
+        Ok(file) => Some(file),
+        Err(_) => {
+            println!("Config file undefined");
+            None
+        },
+    };
+
+    if file.is_some() {
+        file.unwrap().read_to_string(&mut conf_apikey);
     }
 
-    println!("{:?}", result_text);*/
+    if conf_apikey.is_empty() {
+        require_apikey = true;
+    }
 
-}
+    let mathc_args = App::new("Yandex translate program")
+        .version("0.1")
+        .author("Alexsander Startcev(Norbytus), norbyt93@gmail.com")
+        .about("Simple programm work with Yandex translate API, write on Rust")
+        .arg(Arg::with_name("lang")
+            .short("l")
+            .long("lang")
+            .help("Language format in format 'From-To' example 'en-ru'")
+            .required(true)
+            .takes_value(true))
+        .arg(Arg::with_name("api_key")
+             .short("k")
+             .long("key")
+             .help("Yandex translate API key")
+             .required(require_apikey.clone())
+             .takes_value(true))
+        .arg(Arg::with_name("inline_text")
+             .short("t")
+             .long("text")
+             .help("Text for translate")
+             .takes_value(true))
+        .get_matches();
 
-fn read_env(args: (&str, &str), req: bool) -> Option<String> {
+    let lang = mathc_args.value_of("lang").unwrap_or("en");
 
-    let mut args_iter = env::args().into_iter();
+    let text = mathc_args.value_of("inline_text").unwrap_or("");
 
-    let param = args_iter.find( |arg| arg == args.0 || arg == args.1 );
+    let key: &str = mathc_args
+        .value_of("api_key")
+        .unwrap_or_else( || {
+            &conf_apikey
+        });
 
-    let mut result: Option<String> = None;
+    let y_api = YandexTranslate::new();
+
+    let request = y_api.set_apikey(key).translate_from_to(vec![text], lang);
+
+    println!("{:?}", request.get_text());
+    
  
-    if param.is_none() && req {
-        panic!("Need params {} or {}", args.0, args.1);
-    } else if param.is_none() && !req {
-        result = None;
-    } else {
-        result = args_iter.next();
-    }
-
-    result
-
 }
