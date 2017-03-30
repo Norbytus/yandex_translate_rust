@@ -7,43 +7,14 @@ use clap::{Arg, App};
 
 use std::env;
 use std::fs::{OpenOptions, File};
-use std::io::{self, Read};
+use std::io::{self, Read, Error, ErrorKind};
 
 fn main() {
 
-    let home_var = env::vars().find( | var | var.0 == "HOME" );
 
     let mut require_apikey = false;
 
     let mut conf_apikey: String = String::new();
-
-    let mut path: String = match home_var {
-        Some(temp_path) => {
-            temp_path.1
-        },
-        None => String::new(),
-    };
-
-    let config = OpenOptions::new()
-        .read(true)
-        .write(true)
-        .open(path.clone() + "/.yandex.conf");
-
-    let file: Option<File> = match config {
-        Ok(file) => Some(file),
-        Err(_) => {
-            println!("Config file undefined");
-            None
-        },
-    };
-
-    if file.is_some() {
-        file.unwrap().read_to_string(&mut conf_apikey);
-    }
-
-    if conf_apikey.is_empty() {
-        require_apikey = true;
-    }
 
     let mathc_args = App::new("Yandex translate program")
         .version("0.1")
@@ -65,12 +36,18 @@ fn main() {
              .short("t")
              .long("text")
              .help("Text for translate")
+             .required_unless_one(&["pipe"])
              .takes_value(true))
+        .arg(Arg::with_name("pipe")
+             .short("p")
+             .long("pipe")
+             .takes_value(false))
         .get_matches();
 
-    let lang = mathc_args.value_of("lang").unwrap_or("en");
-
     let text = mathc_args.value_of("inline_text").unwrap_or("");
+    println!("{:?}", text);
+    /*let lang = mathc_args.value_of("lang").unwrap_or("en");
+
 
     let key: &str = mathc_args
         .value_of("api_key")
@@ -82,7 +59,39 @@ fn main() {
 
     let request = y_api.set_apikey(key).translate_from_to(vec![text], lang);
 
-    println!("{:?}", request.get_text());
-    
+    let answer = request.get_text().unwrap();
+
+    println!("{:?}", answer);*/
  
+}
+
+fn get_homedir_path() -> Result<String, &'static str> {
+
+    let env_arg = env::vars().find( | env_tuple | env_tuple.0 == "HOME");
+
+    match env_arg {
+        Some((_, path)) => Ok(path),
+        _ => Err("Home dir don't found"),
+    }
+
+}
+
+fn get_config_file_data() -> Result<File, Error> {
+
+    let home_dir = get_homedir_path();
+
+    if home_dir.is_err() {
+        return Err(Error::new(ErrorKind::NotFound, "Not found home dir."))
+    }
+
+    let config_file = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .open(home_dir.unwrap() + "/.yandex_translate/.yandex.conf");
+
+    match config_file {
+        Ok(file) => Ok(file),
+        Err(e) => Err(e),
+    }
+
 }
