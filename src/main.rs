@@ -11,10 +11,9 @@ use std::io::{self, Read, Error, ErrorKind};
 
 fn main() {
 
-
     let mut require_apikey = false;
 
-    let mut conf_apikey: String = String::new();
+    let mut conf_apikey: Option<String> = get_apikey();
 
     let mathc_args = App::new("Yandex translate program")
         .version("0.1")
@@ -62,7 +61,6 @@ fn main() {
     let answer = request.get_text().unwrap();
 
     println!("{:?}", answer);*/
- 
 }
 
 fn get_homedir_path() -> Result<String, &'static str> {
@@ -92,6 +90,26 @@ fn get_config_file_data() -> Result<File, Error> {
     match config_file {
         Ok(file) => Ok(file),
         Err(e) => Err(e),
+    }
+
+}
+
+fn get_apikey() -> Option<String> {
+
+    match get_config_file_data() {
+        Ok(mut file) => {
+            let mut data: String = String::new();
+            file.read_to_string(&mut data);
+            if data.is_empty() {
+                None
+            } else {
+                Some(data)
+            }
+        },
+        Err(e) => {
+            println!("{}", e);
+            None
+        },
     }
 
 }
