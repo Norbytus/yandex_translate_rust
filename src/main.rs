@@ -7,13 +7,12 @@ use clap::{Arg, App};
 
 use std::env;
 use std::fs::{OpenOptions, File};
-use std::io::{self, Read, Error, ErrorKind};
+use std::io::{self, Read, Write, Error, ErrorKind};
+use std::convert::Into;
 
 fn main() {
 
-    let mut require_apikey = false;
-
-    let mut conf_apikey: Option<String> = get_apikey();
+    let conf_apikey: Option<String> = get_apikey();
 
     let mathc_args = App::new("Yandex translate program")
         .version("0.1")
@@ -29,38 +28,69 @@ fn main() {
              .short("k")
              .long("key")
              .help("Yandex translate API key")
-             .required(require_apikey.clone())
+             .required(conf_apikey.is_none())
              .takes_value(true))
         .arg(Arg::with_name("inline_text")
              .short("t")
              .long("text")
              .help("Text for translate")
+             .multiple(true)
              .required_unless_one(&["pipe"])
              .takes_value(true))
         .arg(Arg::with_name("pipe")
              .short("p")
              .long("pipe")
-             .takes_value(false))
+             .help("If this flag exsist other flag like t will be ignored.")
+             .takes_value(false)
+             .empty_values(true))
         .get_matches();
 
-    let text = mathc_args.value_of("inline_text").unwrap_or("");
-    println!("{:?}", text);
-    /*let lang = mathc_args.value_of("lang").unwrap_or("en");
+    let mut text: String = mathc_args
+        .value_of("inline_text")
+        .unwrap_or("")
+        .into();
 
+    if mathc_args.is_present("pipe") {
+        text = get_text_from_pipe();
+    }
 
-    let key: &str = mathc_args
+    let lang = mathc_args.value_of("lang").unwrap_or("en");
+
+    let key_flag: String = mathc_args
         .value_of("api_key")
-        .unwrap_or_else( || {
-            &conf_apikey
-        });
+        .unwrap_or(&conf_apikey.unwrap())
+        .into();
 
     let y_api = YandexTranslate::new();
 
-    let request = y_api.set_apikey(key).translate_from_to(vec![text], lang);
+    let request = y_api.set_apikey(key_flag).translate_from_to(vec![&text], lang);
 
-    let answer = request.get_text().unwrap();
+    let answer = request.get_text();
 
-    println!("{:?}", answer);*/
+    let result = match answer {
+        Ok(vec) => {
+            vec.into_iter().fold(String::new(), |mut temp, word| {
+                temp = format!(" {} {} ", temp, word);
+                temp
+            })
+        },
+        Err(e) => {
+            format!("{}", e)
+        }
+    };
+
+    io::stdout().write(result.trim().to_string().as_bytes());
+
+}
+
+fn get_text_from_pipe() -> String {
+
+    let mut input: String = String::new();
+    match io::stdin().read_line(&mut input) {
+        Ok(_) => input,
+        Err(_) => String::new(),
+    }
+
 }
 
 fn get_homedir_path() -> Result<String, &'static str> {
