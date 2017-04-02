@@ -17,6 +17,7 @@ You can create dir .yandex_translate in your home dir and create inside file .ya
 Need rustc 1.17.0-nightly
 
 ## Hot to use
+If your don't have config file you need always set flag -k with your api key.
 Show help
 ```bash
 yandex_translate -h
