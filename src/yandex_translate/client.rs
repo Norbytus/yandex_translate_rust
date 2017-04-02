@@ -27,7 +27,7 @@ impl YandexTranslate {
         let connector = HttpsConnector::new(ssl);
 
         YandexTranslate {
-            url: "https://translate.yandex.net/api/v1.5/tr.json/translate?",
+            url: "https://translate.yandex.net/api/v1.5/tr.json/",
             api_key: String::new(),
             client: Client::with_connector(connector),
         }
@@ -44,7 +44,7 @@ impl YandexTranslate {
 
         let mut query: String = String::from(self.url);
 
-        query = format!("{}key={}&lang={}", query, self.api_key, ft);
+        query = format!("translate?{}key={}&lang={}", query, self.api_key, ft);
 
         query = query + &YandexTranslate::vec_to_string(what, "&text=");
 
@@ -56,7 +56,7 @@ impl YandexTranslate {
 
         let mut result: String = String::new();
 
-        let request = self.client
+        self.client
             .get(query)
             .send()
             .unwrap()
