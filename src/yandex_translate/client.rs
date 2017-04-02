@@ -28,7 +28,7 @@ impl YandexTranslate {
     ///Constructor a new YandexTranslate
     /// # Example 
     /// ```rust
-    /// use yandex_translate::yandex_translate::client::YandexTranslate
+    /// use yandex_translate::yandex_translate::client::YandexTranslate;
     ///
     /// let request = YandexTranslate::new();
     /// ```
@@ -49,10 +49,10 @@ impl YandexTranslate {
     ///Set field api key
     /// # Example
     /// ```rust
-    /// use yandex_translate::yandex_translate::client::YandexTranslate
+    /// use yandex_translate::yandex_translate::client::YandexTranslate;
     ///
     /// let request = YandexTranslate::new();
-    /// request.set_apikey("Some_key");
+    /// request.set_apikey("Some_code");
     /// ```
     pub fn set_apikey<D: Into<String>>(mut self, value: D) -> Self {
         self.api_key = value.into();
@@ -62,17 +62,17 @@ impl YandexTranslate {
     /// Translate text fron one language to another
     /// #Example
     /// ```rust
-    /// use yandex_translate::yandex_translate::client::YandexTranslate
+    /// use yandex_translate::yandex_translate::client::YandexTranslate;
     ///
     /// let request = YandexTranslate::new();
-    /// let result = request.set__apikey("Some_key").translate_from_to(vec!["Hello"], "en-ru");
+    /// let result = request.set_apikey("Some_code").translate_from_to(vec!["Hello"], "en-ru");
     /// ```
     pub fn translate_from_to(&self, what: Vec<&str>, ft: &str)
         -> YandexTranslateResult {
 
         let mut query: String = String::from(self.url);
 
-        query = format!("translate?{}key={}&lang={}", query, self.api_key, ft);
+        query = format!("{}translate?key={}&lang={}", query, self.api_key, ft);
 
         query = query + &YandexTranslate::vec_to_string(what, "&text=");
 
