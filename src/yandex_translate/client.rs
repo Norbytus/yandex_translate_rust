@@ -10,16 +10,28 @@ use yandex_translate::result::YandexTranslateResult;
 
 use std::io::Read;
 
+#[doc="this"]
 
+///Client for yandex translate api
 #[derive(Debug)]
 pub struct YandexTranslate {
+    ///Url for request
     url: &'static str,
+    ///Api key
     api_key: String,
+    ///Client object
     client: Client,
 }
 
 impl YandexTranslate {
 
+    ///Constructor a new YandexTranslate
+    /// # Example 
+    /// ```rust
+    /// use yandex_translate::yandex_translate::client::YandexTranslate
+    ///
+    /// let request = YandexTranslate::new();
+    /// ```
     pub fn new() -> YandexTranslate {
 
         let ssl = NativeTlsClient::new().unwrap();
@@ -34,11 +46,27 @@ impl YandexTranslate {
 
     }
 
+    ///Set field api key
+    /// # Example
+    /// ```rust
+    /// use yandex_translate::yandex_translate::client::YandexTranslate
+    ///
+    /// let request = YandexTranslate::new();
+    /// request.set_apikey("Some_key");
+    /// ```
     pub fn set_apikey<D: Into<String>>(mut self, value: D) -> Self {
         self.api_key = value.into();
         self
     }
 
+    /// Translate text fron one language to another
+    /// #Example
+    /// ```rust
+    /// use yandex_translate::yandex_translate::client::YandexTranslate
+    ///
+    /// let request = YandexTranslate::new();
+    /// let result = request.set__apikey("Some_key").translate_from_to(vec!["Hello"], "en-ru");
+    /// ```
     pub fn translate_from_to(&self, what: Vec<&str>, ft: &str)
         -> YandexTranslateResult {
 
