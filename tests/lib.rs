@@ -9,6 +9,7 @@ const API_KEY: &str = "trnsl.1.1.20170312T094041Z.4da8d12c2c6c961e.4bd73640b569f
 fn create_struct() {
 
     let translate = YandexTranslate::new();
+    println!("{:?}", translate);
 
 }
 
@@ -16,7 +17,7 @@ fn create_struct() {
 fn set_api_key() {
 
     let translate = YandexTranslate::new();
-    translate.set_apikey(API_KEY);
+    println!("{:?}", translate.set_apikey(API_KEY));
 
 }
 
@@ -24,9 +25,11 @@ fn set_api_key() {
 fn get_code() {
 
     let translate = YandexTranslate::new();
+
     let request = translate.set_apikey(API_KEY)
         .translate_from_to(vec!["Hello"], "en-ru");
-    request.get_code();
+
+    println!("{:?}", request.get_code());
 
 }
 
