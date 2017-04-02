@@ -129,7 +129,9 @@ fn get_apikey() -> Option<String> {
     match get_config_file_data() {
         Ok(mut file) => {
             let mut data: String = String::new();
-            file.read_to_string(&mut data);
+
+            file.read_to_string(&mut data).unwrap_or(0);
+
             if data.is_empty() {
                 None
             } else {
