@@ -2,6 +2,8 @@ extern crate json;
 
 use self::json::JsonValue;
 
+use yandex_translate::code_errors::Code;
+
 #[derive(Debug, Clone)]
 pub struct YandexTranslateResult {
     data: JsonValue,
@@ -13,7 +15,7 @@ impl YandexTranslateResult {
         YandexTranslateResult { data: json }
     }
 
-    pub fn get_code(&self) -> Result<u64, &'static str> {
+    pub fn get_code(&self) -> Result<Code, Code> {
 
         let data = self.data.clone();
         
@@ -25,25 +27,25 @@ impl YandexTranslateResult {
                 .as_parts();
 
             match code {
-                200 => { Ok(code) },
-                401 => { Err("Invalid API key.") },
-                402 => { Err("Blocked API key.") },
-                404 => { Err("Exceeded the daily limit on the amount of translated text.") },
-                413 => { Err("Exceeded the maximum text size.") },
-                422 => { Err("The text cannot be translated.") },
-                501 => { Err("The specified translation direction is not supported.") },
-                _ => { Err("Error") },
+                200 => { Ok( Code::Success ) },
+                401 => { Err( Code::InvalidKey{ code: "Invalid API key." } ) },
+                402 => { Err( Code::BlockedKey{ code: "Blocked API key." } ) },
+                404 => { Err( Code::DailyLimit{ code: "Exceeded the daily limit on the amount of translated text." } ) },
+                413 => { Err( Code::MaximumTextSize{ code: "Exceeded the maximum text size." } ) },
+                422 => { Err(Code::CannotTranslate{ code: "The text cannot be translated." } )},
+                501 => { Err(Code::NotSupportedLang{ code: "The specified translation direction is not supported." } )},
+                _ => { Err(Code::Error) },
             }
 
         } else {
 
-            Err("Wrong JSON format")
+            Err(Code::JsonWrongFormat)
 
         }
 
     }
 
-    pub fn get_text(&self) -> Result<Vec<String>, &'static str> {
+    pub fn get_text(&self) -> Result<Vec<String>, Code> {
 
         let code = self.get_code();
 
@@ -71,7 +73,7 @@ impl YandexTranslateResult {
             },
             Err(e) => {
 
-                Err("Some error")
+                Err(e)
 
             }
         }
@@ -79,3 +81,5 @@ impl YandexTranslateResult {
     }
 
 } 
+
+
