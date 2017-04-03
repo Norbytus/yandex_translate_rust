@@ -50,9 +50,7 @@ fn main() {
         .unwrap_or("")
         .into();
 
-    if mathc_args.is_present("pipe") {
-        text = get_text_from_pipe();
-    }
+    if mathc_args.is_present("pipe") { text = get_text_from_pipe(); }
 
     let lang = mathc_args.value_of("lang").unwrap_or("en");
 
