@@ -84,6 +84,7 @@ impl YandexTranslate {
 
         let mut result: String = String::new();
 
+        // [clink tag](rust)
         self.client
             .get(query)
             .send()
