@@ -1,0 +1,11 @@
+language: rust
+rust: 
+  - nightly
+script:
+  - cargo build
+  - cargo test
+matrix:
+  inlcude:
+    - os: linux
+      env: TARGET=x86_64-unknown-freebsd
+      rust: nightly
