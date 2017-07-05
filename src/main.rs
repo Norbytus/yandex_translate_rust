@@ -1,7 +1,7 @@
 extern crate yandex_translate;
 extern crate clap;
 
-use yandex_translate::yandex_translate::client::YandexTranslate;
+use yandex_translate::client::YandexTranslate;
 
 use clap::{Arg, App};
 

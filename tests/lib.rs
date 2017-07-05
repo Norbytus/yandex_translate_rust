@@ -1,7 +1,7 @@
 extern crate yandex_translate;
 
-use yandex_translate::yandex_translate::client::YandexTranslate;
-use yandex_translate::yandex_translate::result::YandexTranslateResult;
+use yandex_translate::client::YandexTranslate;
+use yandex_translate::result::YandexTranslateResult;
 
 const API_KEY: &str = "trnsl.1.1.20170312T094041Z.4da8d12c2c6c961e.4bd73640b569f7bfb32b545e188ea1d79dd9cd0e";
 

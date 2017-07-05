@@ -2,7 +2,7 @@ extern crate json;
 
 use self::json::JsonValue;
 
-use yandex_translate::code_errors::Code;
+use super::code_errors::Code;
 
 ///Struct with answer from server in Json format
 #[derive(Debug, Clone)]
@@ -15,7 +15,7 @@ impl YandexTranslateResult {
     ///Constructor
     /// # Example
     /// ```rust
-    /// use yandex_translate::yandex_translate::client::YandexTranslate;
+    /// use yandex_translate::client::YandexTranslate;
     ///
     /// let request = YandexTranslate::new();
     /// let result = request.set_apikey("Some_key").translate_from_to(vec!["Hello"], "en-ru");
@@ -28,7 +28,7 @@ impl YandexTranslateResult {
     /// Show code answer from server
     /// # Example
     /// ```rust
-    /// use yandex_translate::yandex_translate::client::YandexTranslate;
+    /// use yandex_translate::client::YandexTranslate;
     ///
     /// let request = YandexTranslate::new();
     /// let result = request.set_apikey("Some_code").translate_from_to(vec!["Hello"], "en-ru");
@@ -68,7 +68,7 @@ impl YandexTranslateResult {
     /// Get text answer from server if code answer Success(200)
     /// # Example
     /// ```rust
-    /// use yandex_translate::yandex_translate::client::YandexTranslate;
+    /// use yandex_translate::client::YandexTranslate;
     ///
     /// let request = YandexTranslate::new();
     /// let result = request.set_apikey("Some_code").translate_from_to(vec!["Hello"], "en-ru");

@@ -6,7 +6,7 @@ use self::hyper::client::Client;
 use self::hyper::net::HttpsConnector;
 use self::hyper_native_tls::NativeTlsClient;
 
-use yandex_translate::result::YandexTranslateResult;
+use super::result::YandexTranslateResult;
 
 use std::io::Read;
 
@@ -28,7 +28,7 @@ impl YandexTranslate {
     ///Constructor a new YandexTranslate
     /// # Example 
     /// ```rust
-    /// use yandex_translate::yandex_translate::client::YandexTranslate;
+    /// use yandex_translate::client::YandexTranslate;
     ///
     /// let request = YandexTranslate::new();
     /// ```
@@ -49,7 +49,7 @@ impl YandexTranslate {
     ///Set field api key
     /// # Example
     /// ```rust
-    /// use yandex_translate::yandex_translate::client::YandexTranslate;
+    /// use yandex_translate::client::YandexTranslate;
     ///
     /// let request = YandexTranslate::new();
     /// request.set_apikey("Some_code");
@@ -62,7 +62,7 @@ impl YandexTranslate {
     /// Translate text fron one language to another
     /// #Example
     /// ```rust
-    /// use yandex_translate::yandex_translate::client::YandexTranslate;
+    /// use yandex_translate::client::YandexTranslate;
     ///
     /// let request = YandexTranslate::new();
     /// let result = request.set_apikey("Some_code").translate_from_to(vec!["Hello"], "en-ru");
