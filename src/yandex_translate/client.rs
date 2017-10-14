@@ -9,16 +9,27 @@ use std::io::Read;
 
 use super::answer::Answer;
 
+///Base url for request
 const BASE_URL: &'static str = "https://translate.yandex.net/api/v1.5/tr.json/";
 
 
+//Client for query
 pub struct YandexTranslate {
+    ///API_KEY
     api_key: String,
+    ///Client object
     client: Client,
 }
 
 impl YandexTranslate {
 
+    ///Create new object
+    ///# Example
+    ///```rust
+    ///use yandex_translate::client::YandexTranslate;
+    ///
+    ///let request = YandexTranslate::new();
+    ///```
     pub fn new() -> YandexTranslate {
         let ssl = NativeTlsClient::new().unwrap();
         let connector = HttpsConnector::new(ssl);
@@ -28,11 +39,30 @@ impl YandexTranslate {
         }
     }
 
+    pub fn get_apikey(&self) -> &str {
+        &self.api_key
+    }
+
+    ///Set api key
+    ///# Example
+    ///```rust
+    ///use yandex_translate::client::YandexTranslate;
+    ///
+    ///let request = YandexTranslate::new().set_apikey("<API_KEY>");
+    ///```
     pub fn set_apikey<D: Into<String>>(mut self, value: D) -> Self {
         self.api_key = value.into();
         self
     }
 
+    ///Translate text
+    ///# Example
+    ///```rust
+    ///use yandex_translate::client::YandexTranslate;
+    ///
+    ///let request = YandexTranslate::new().set_apikey("<API_KEY>");
+    ///let translate = request.translate(vec!["Hello World!"], "en-ru");
+    ///```
     pub fn translate(&self, what: Vec<&str>, ft: &str) -> Answer {
         let mut query: String = String::from(BASE_URL);
         query = format!("{}translate?key={}&lang={}", query, self.api_key, ft);
