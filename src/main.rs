@@ -1,14 +1,15 @@
 extern crate yandex_translate;
 extern crate clap;
 
-use yandex_translate::client::YandexTranslate;
-
 use clap::{Arg, App};
 
 use std::env;
 use std::fs::{OpenOptions, File};
-use std::io::{self, Read, Write, Error, ErrorKind};
+use std::io::{self, Read, Error, ErrorKind};
 use std::convert::Into;
+
+use yandex_translate::client::YandexTranslate as YT;
+use yandex_translate::answer::{Answer, GetInfo};
 
 fn main() {
 
@@ -59,25 +60,12 @@ fn main() {
         .unwrap_or(&conf_apikey.unwrap())
         .into();
 
-    let y_api = YandexTranslate::new();
+    let y_api = YT::new().set_apikey(key_flag);
 
-    let request = y_api.set_apikey(key_flag).translate_from_to(vec![&text], lang);
-
-    let answer = request.get_text();
-
-    let result = match answer {
-        Ok(vec) => {
-            vec.into_iter().fold(String::new(), |mut temp, word| {
-                temp = format!(" {} {} ", temp, word);
-                temp
-            })
-        },
-        Err(e) => {
-            format!("{}", e)
-        }
-    };
-
-    io::stdout().write(result.trim().to_string().as_bytes());
+    match y_api.translate(vec![&text], lang) {
+        Answer::Translate(translate) => println!("{}", translate.get_message()),
+        Answer::ErrorYt(err) => println!("{}", err.get_message()),
+    }
 
 }
 
