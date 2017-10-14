@@ -1,6 +1,9 @@
-#[path = "yandex_translate/result.rs"]
-pub mod result;
+#[macro_use]
+extern crate serde_derive;
+extern crate serde_json;
+
 #[path = "yandex_translate/client.rs"]
 pub mod client;
-#[path = "yandex_translate/code_errors.rs"]
-pub mod code_errors;
+
+#[path = "yandex_translate/answer.rs"]
+pub mod answer;
