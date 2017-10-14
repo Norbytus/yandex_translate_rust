@@ -1,6 +1,6 @@
 [package]
 name = "yandex_translate"
-version = "0.1.0"
+version = "2.0.0"
 authors = ["norbytus <norbyt93@gmail.com>"]
 
 [dependencies]
