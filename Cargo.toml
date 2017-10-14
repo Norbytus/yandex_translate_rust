@@ -2,6 +2,10 @@
 name = "yandex_translate"
 version = "2.0.0"
 authors = ["norbytus <norbyt93@gmail.com>"]
+description = "Rust wrapper on Yandex api translator https://tech.yandex.ru/translate/"
+repository = "https://github.com/Norbytus/yandex_translate_rust"
+keywords = ["yandex", "translate"]
+license-file = "LICENSE"
 
 [dependencies]
 hyper = "0.10.5"
