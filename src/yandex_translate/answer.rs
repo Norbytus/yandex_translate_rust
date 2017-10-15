@@ -1,10 +1,12 @@
 use serde_json::{self, Error as SError};
 use std::result::Result;
+use std::collections::HashMap;
 
 ///Enum with answer from request
 #[derive(Debug)]
 pub enum Answer {
     Translate(Translate),
+    SupportLang(Langs),
     ErrorYt(ErrorYt),
 }
 
@@ -15,16 +17,28 @@ impl Answer {
 
         let translate: Result<Translate, SError> = serde_json::from_str(&data);
 
-        let answer: Answer = match translate {
+        match translate {
             Ok(translate) => Answer::Translate(translate),
             Err(_) => {
                 let error: ErrorYt = serde_json::from_str(&data).unwrap_or(ErrorYt::new());
                 Answer::ErrorYt(error)
             }
-        };
+        }
 
-        answer
+    }
 
+    ///Method return Answer with supported language
+    pub fn get_lang(data: String) -> Answer {
+
+        let lang: Result<Langs, SError> = serde_json::from_str(&data);
+
+        match lang {
+            Ok(lang) => Answer::SupportLang(lang),
+            Err(_) => {
+                let error: ErrorYt = serde_json::from_str(&data).unwrap_or(ErrorYt::new());
+                Answer::ErrorYt(error)
+            }
+        }
     }
 
 }
@@ -99,4 +113,30 @@ pub trait GetInfo {
     fn get_code(&self) -> u32;
 
     fn get_message(&self) -> String;
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Langs {
+    dirs: Vec<String>,
+    langs: HashMap<String, String>,
+}
+
+impl Langs {
+    ///Return Full language name by his code
+    pub fn get_full_name_by_code(&self, lang_code: &str) -> Option<String> {
+        match self.langs.get(lang_code) {
+            Some(lang) => Some(lang.to_string()),
+            None => None,
+        }
+    }
+
+    ///Return vector supported language
+    pub fn get_supports_lang(&self) -> Vec<String> {
+        self.dirs.clone()
+    }
+
+    ///Check supported lang by his code
+    pub fn is_support(&self, code: &str) -> bool {
+        self.langs.contains_key(code)
+    }
 }

@@ -33,6 +33,7 @@ fn test_translate() {
     match text {
         Answer::Translate(_) => {},
         Answer::ErrorYt(err) => panic!("{:?}", err),
+        _ => {},
     }
 
 }

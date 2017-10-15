@@ -67,10 +67,24 @@ impl YandexTranslate {
         let mut query: String = String::from(BASE_URL);
         query = format!("{}translate?key={}&lang={}", query, self.api_key, ft);
         query = query + &YandexTranslate::vec_to_string(what, "&text=");
-        self.execute(&query)
+        Answer::get_translate(self.execute(&query))
     }
 
-    fn execute(&self, query: &str) -> Answer {
+    ///Check Support Lang
+    ///# Execute
+    ///```rust
+    ///use yandex_translate::client::YandexTranslate;
+    ///
+    ///let request = YandexTranslate::new().set_apikey("<API_KEY>");
+    ///let suppoert_lang = request.get_support_lang("en");
+    ///```
+    pub fn get_support_lang(&self, lang: &str) -> Answer {
+        let mut query: String = String::from(BASE_URL);
+        query = format!("{}getLangs?key={}&ui={}", query, self.api_key, lang);
+        Answer::get_lang(self.execute(&query))
+    }
+
+    fn execute(&self, query: &str) -> String {
         let mut result: String = String::new();
 
         self.client
@@ -80,7 +94,7 @@ impl YandexTranslate {
             .read_to_string(&mut result)
             .unwrap();
 
-        Answer::get_translate(result)
+        result
     }
 
     fn vec_to_string(vec: Vec<&str>, delimetr: &str) -> String {

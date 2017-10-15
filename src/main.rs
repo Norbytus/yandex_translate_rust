@@ -65,6 +65,7 @@ fn main() {
     match y_api.translate(vec![&text], lang) {
         Answer::Translate(translate) => println!("{}", translate.get_message()),
         Answer::ErrorYt(err) => println!("{}", err.get_message()),
+        _ => {},
     }
 
 }
