@@ -5,7 +5,7 @@ authors = ["norbytus <norbyt93@gmail.com>"]
 description = "Rust wrapper on Yandex api translator https://tech.yandex.ru/translate/"
 repository = "https://github.com/Norbytus/yandex_translate_rust"
 keywords = ["yandex", "translate"]
-license = "Apache License"
+license = "https://spdx.org/licenses/AFL-2.0.html"
 
 [dependencies]
 hyper = "0.10.5"
