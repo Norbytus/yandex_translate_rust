@@ -6,7 +6,6 @@ description = "Rust wrapper on Yandex api translator https://tech.yandex.ru/tran
 repository = "https://github.com/Norbytus/yandex_translate_rust"
 keywords = ["yandex", "translate"]
 license = "Apache License"
-license-file = "LICENSE"
 
 [dependencies]
 hyper = "0.10.5"

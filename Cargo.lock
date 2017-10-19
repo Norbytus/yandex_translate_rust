@@ -1,6 +1,6 @@
 [root]
 name = "yandex_translate"
-version = "2.0.0"
+version = "2.1.0"
 dependencies = [
  "clap 2.22.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "hyper 0.10.5 (registry+https://github.com/rust-lang/crates.io-index)",
