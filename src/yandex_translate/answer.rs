@@ -78,7 +78,7 @@ impl GetInfo for Translate {
     }
 }
 
-///Object with erro answer from server
+///Object with error answer from server
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ErrorYt {
     ///Answer Code
@@ -115,9 +115,12 @@ pub trait GetInfo {
     fn get_message(&self) -> String;
 }
 
+///Object with support lang list
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Langs {
+    ///Old unused answer from server
     dirs: Vec<String>,
+    ///Supported language list
     langs: HashMap<String, String>,
 }
 
