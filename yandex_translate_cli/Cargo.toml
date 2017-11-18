@@ -1,0 +1,8 @@
+[package]
+name = "yandex_translate_cli"
+version = "0.1.0"
+authors = ["norbytus <norbyt93@gmail.com>"]
+
+[dependencies]
+clap = "2.22.1"
+yandex_translate = { path = "../"}
