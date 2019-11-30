@@ -5,9 +5,11 @@ authors = ["norbytus <norbyt93@gmail.com>"]
 description = "Rust wrapper on Yandex api translator https://tech.yandex.ru/translate/"
 repository = "https://github.com/Norbytus/yandex_translate_rust"
 keywords = ["yandex", "translate"]
+edition = "2018"
 license = "Apache-2.0"
 
 [dependencies]
 serde_derive = "1.0.103"
 serde_json = "1.0.42"
 serde = "1.0.103"
+mockall = "0.5.0"
